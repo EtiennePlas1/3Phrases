@@ -21,7 +21,7 @@ Travail effectué :
 
 Travail en cours :
 
-Fix de la compatibilité metamask
+Ajout de sections dans l'ihm pour une meilleure visibilité 
 
 A faire :
 
