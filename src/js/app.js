@@ -59,20 +59,21 @@ App = {
 
     const troisPhrases = await App.contracts.TroisPhrases.deployed();
     const defLength = await troisPhrases.getDefinitionsLength.call();
-
-if(defLength != 0){
+    console.log("defLength : " + defLength)
+    for (var i = 0; i < defLength; i++) {
       let defsRow = $('#defsRow');
       let defTemplate = $('#defTemplate');
       let definitionAffichage;
-      const definition = await troisPhrases.definitions.call(defLength-1);
-      defTemplate.find('.defined').text(definition.defined);
-      defTemplate.find('.user').text(definition.user);
-      defTemplate.find('.definition').text(definition.definition);
-      defTemplate.find('.votes').text(definition.votes);
-      defTemplate.find('.btn-vote').attr('data-id', defLength-1);
+      const definition = await troisPhrases.definitions.call(i);
+      console.log("def : " + definition);
+      defTemplate.find('.defined').text(definition[2]);
+      defTemplate.find('.user').text(definition[0]);
+      defTemplate.find('.definition').text(definition[1]);
+      defTemplate.find('.votes').text(definition[3]);
+      defTemplate.find('.btn-vote').attr('data-id', i);
       defsRow.append(defTemplate.html());
-      }
 
+    }
   },
 
   voteForDef: async function(event) {
