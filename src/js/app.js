@@ -53,28 +53,42 @@ App = {
   bindEvents: function() {
     $(document).on('click', '.btn-vote', App.voteForDef);
     $(document).on('click', '.btn-add-def', App.addDefinition);
+    $(document).on('click', '.btn-suppr', App.supprDefinition);
   },
 
   displayDefinitions: async function() {
 
     const troisPhrases = await App.contracts.TroisPhrases.deployed();
     const defLength = await troisPhrases.getDefinitionsLength.call();
-    //console.log("defLength : " + defLength)
+    console.log("defLength : " + defLength)
+    $("#defsRow").empty();
     for (var i = 0; i < defLength; i++) {
-      let defsRow = $('#defsRow');
-      let defTemplate = $('#defTemplate');
-      let definitionAffichage;
-      const definition = await troisPhrases.definitions.call(i);
-      //console.log("def : " + definition);
-      defTemplate.find('.defined').text(definition[2]);
-      defTemplate.find('.user').text(definition[0]);
-      defTemplate.find('.definition').text(definition[1]);
-      defTemplate.find('.votes').text(definition[3]);
-      defTemplate.find('.votes').attr('id', 'vote-'+i);
-      defTemplate.find('.btn-vote').attr('data-id', i);
-      defsRow.append(defTemplate.html());
-
+      App.displayDefById(i, troisPhrases);
     }
+  },
+
+  displayDefById: async function(id, contract){
+    let defsRow = $('#defsRow');
+    let defTemplate = $('#defTemplate');
+    let definitionAffichage;
+    const definition = await contract.definitions.call(id);
+    console.log("def : " + definition);
+    defTemplate.find('.panel-def').attr('data-id', 'def-'+id);
+    defTemplate.find('.defined').text(definition[2]);
+    defTemplate.find('.user').text(definition[0]);
+    defTemplate.find('.definition').text(definition[1]);
+    defTemplate.find('.votes').text(definition[3]);
+    defTemplate.find('.votes').attr('data-id', 'vote-'+id);
+    defTemplate.find('.btn-vote').attr('data-id', id);
+    defTemplate.find('.btn-suppr').attr('data-id', id);
+    defsRow.append(defTemplate.html());
+  },
+
+  updateVoteDisplayById: async function(id){
+    const troisPhrases = await App.contracts.TroisPhrases.deployed();
+    const definition = await troisPhrases.definitions.call(id);
+    $('[data-id="vote-'+id+'"]').text(definition[3]);
+
   },
 
   voteForDef: async function(event) {
@@ -88,7 +102,7 @@ App = {
       await troisPhrases.vote(defId, {
         from: accounts[0]
       });
-      App.updateDisplay(defId);
+      App.updateVoteDisplayById(defId);
     });
 
   },
@@ -102,14 +116,23 @@ App = {
       }
       const troisPhrases = await App.contracts.TroisPhrases.deployed();
       await troisPhrases.createDefinition(addedDefinition, addedDefined, { from: accounts[0] });
-      App.displayDefinitions();
+      const defLength = await troisPhrases.getDefinitionsLength.call();
+      App.displayDefById(defLength-1, troisPhrases);
     });
   },
 
-  updateDisplay: async function(index){
-    const troisPhrases = await App.contracts.TroisPhrases.deployed();
-    const definition = await troisPhrases.definitions.call(index);
-    $('#vote-'+index).text(definition[3]);
+  supprDefinition : async function(event){
+    let defId = parseInt($(event.target).data('id'));
+    web3.eth.getAccounts(async function(error, accounts) {
+      if (error) {
+        console.log(error);
+      }
+      const troisPhrases = await App.contracts.TroisPhrases.deployed();
+      await troisPhrases.deleteDefinition(defId, {
+        from: accounts[0]
+      }).then(()=>{App.displayDefinitions();});
+    });
+
   }
 
 };

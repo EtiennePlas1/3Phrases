@@ -24,4 +24,13 @@ contract TroisPhrases {
     definitions[i].votes+=1;
   }
 
+  function deleteDefinition(uint index) public {
+        require(index <= definitions.length,"cette definition ne figure pas dans la liste");
+        require(definitions[index].user == msg.sender,"vous devez etre le createur de cette definition pour pouvoir la supprimer");
+
+        for (uint i = index; i<definitions.length-1; i++){
+            definitions[i] = definitions[i+1];
+        }
+        definitions.length--;
+      }
 }

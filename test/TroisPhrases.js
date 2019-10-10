@@ -3,7 +3,6 @@ const TroisPhrases = artifacts.require("./TroisPhrases.sol");
 contract("TroisPhrases", accounts => {
   it("devrait creer une definition", async () => {
     const troisPhrases = await TroisPhrases.deployed();
-
     // On cree une nouvelle definition
     await troisPhrases.createDefinition("Une definition", "un truc defini", { from: accounts[2] });
 
@@ -13,7 +12,7 @@ contract("TroisPhrases", accounts => {
     const definitions = await troisPhrases.definitions.call(0);
     console.log(definitions);
 
-    const longueur = await troisPhrases.getDefinitionsLength.call()
+    let longueur = await troisPhrases.getDefinitionsLength.call()
     assert.equal(longueur, 1, "the new object wasnt stored");
 
     assert.equal(definitions.definition, "Une definition", "The def was not stored");
@@ -25,7 +24,16 @@ contract("TroisPhrases", accounts => {
     assert.equal(definitions.votes, 1, "The Votes were not stored");
 
 
+     try {
+       await troisPhrases.deleteDefinition(0, { from: accounts[0] });
+     } catch (e) {
+       console.error(e);
+       longueur = await troisPhrases.getDefinitionsLength.call();
+       assert.equal(longueur, 1, "the new object was deleted");
+     }
 
-
+    await troisPhrases.deleteDefinition(0, { from: accounts[2] });
+    longueur = await troisPhrases.getDefinitionsLength.call();
+    assert.equal(longueur, 0, "the new object wasnt deleted");
   });
 });
