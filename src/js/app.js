@@ -55,21 +55,22 @@ App = {
     $(document).on('click', '.btn-add-def', App.addDefinition);
   },
 
-  displayDefinitions: async function(adopters, account) {
+  displayDefinitions: async function() {
 
     const troisPhrases = await App.contracts.TroisPhrases.deployed();
     const defLength = await troisPhrases.getDefinitionsLength.call();
-    console.log("defLength : " + defLength)
+    //console.log("defLength : " + defLength)
     for (var i = 0; i < defLength; i++) {
       let defsRow = $('#defsRow');
       let defTemplate = $('#defTemplate');
       let definitionAffichage;
       const definition = await troisPhrases.definitions.call(i);
-      console.log("def : " + definition);
+      //console.log("def : " + definition);
       defTemplate.find('.defined').text(definition[2]);
       defTemplate.find('.user').text(definition[0]);
       defTemplate.find('.definition').text(definition[1]);
       defTemplate.find('.votes').text(definition[3]);
+      defTemplate.find('.votes').attr('id', 'vote-'+i);
       defTemplate.find('.btn-vote').attr('data-id', i);
       defsRow.append(defTemplate.html());
 
@@ -87,7 +88,7 @@ App = {
       await troisPhrases.vote(defId, {
         from: accounts[0]
       });
-      App.displayDefinitions();
+      App.updateDisplay(defId);
     });
 
   },
@@ -103,6 +104,12 @@ App = {
       await troisPhrases.createDefinition(addedDefinition, addedDefined, { from: accounts[0] });
       App.displayDefinitions();
     });
+  },
+
+  updateDisplay: async function(index){
+    const troisPhrases = await App.contracts.TroisPhrases.deployed();
+    const definition = await troisPhrases.definitions.call(index);
+    $('#vote-'+index).text(definition[3]);
   }
 
 };
