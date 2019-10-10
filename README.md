@@ -53,3 +53,10 @@ vous avez initialisé un environnement de test et migré les contrats sur la blo
 
 Pour lancer l'application il suffit de lancer la commande <code>npm run dev</code> en ligne de commande dans le dossier où se trouve l'application.
 
+-----
+
+Fonctionnalités : 
+
+- ajouter des définitions dans la blockchain
+- voter pour une définition
+- affichage automatique des définitions
