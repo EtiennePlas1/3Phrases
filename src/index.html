@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-  <title>192 caractères pour définir un concept</title>
+  <title>Trois Phrases pour définir un concept</title>
 
   <!-- Bootstrap -->
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +23,7 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12 col-sm-8 col-sm-push-2">
-        <h1 class="text-center">192 caractères pour définir un concept</h1>
+        <h1 class="text-center">Trois Phrases pour définir un concept</h1>
         <hr />
         <br />
       </div>
@@ -47,7 +47,38 @@
         </div>
       </div>
     </div>
+
+    <div id="Sents" class="row">
+      <div class="col-sm-6 col-sm-push-3 col-md-4 col-md-push-4">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">My Sents</h3>
+          </div>
+          <div class="panel-body">
+            <h4>Balance</h4>
+            <strong>Balance</strong>: <span id="SEBalance"></span> SE<br/><br/>
+            <h4>Transfer</h4>
+            <input type="text" class="form-control" id="SETransferAddress" placeholder="Address" />
+            <input type="text" class="form-control" id="SETransferAmount" placeholder="Amount" />
+            <button class="btn btn-primary" id="transferButton" type="button">Envoyer</button>
+          </div>
+        </div>
+      </div>
+    </div> 
+
+      <div id="Recherche" class="row">
+        <div class="col-sm-6 col-sm-push-3 col-md-4 col-md-push-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Rechercher une définition</h3>
+            </div>
+            <div class="panel-body">             
+              <input type="text" class="rechercheDef" placeholder="mot défini" />              
+          </div>
+        </div>
     </div>
+  </div> 
+</div>
 
   <div class="container">
   <div id="defsRow" class="row">
@@ -59,7 +90,7 @@
     <div class="col-sm-7 col-md-5 col-lg-4">
       <div class="panel panel-default panel-def">
         <div class="panel-heading">
-          <h3 class="defined">Terme a définir</h3>
+          <h3 class="defined" data-id="0">Terme a définir</h3>
         </div>
         <div class="panel-body">
           <br /><br />

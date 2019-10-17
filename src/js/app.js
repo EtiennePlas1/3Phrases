@@ -26,7 +26,7 @@ App = {
     }
     // If no injected web3 instance is detected, fall back to Ganache
     else {
-      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:9545');
     }
     web3 = new Web3(App.web3Provider);
 
@@ -54,6 +54,7 @@ App = {
     $(document).on('click', '.btn-vote', App.voteForDef);
     $(document).on('click', '.btn-add-def', App.addDefinition);
     $(document).on('click', '.btn-suppr', App.supprDefinition);
+    $(document).on('keyup', '.rechercheDef', App.rechercheDef);
   },
 
   displayDefinitions: async function() {
@@ -63,24 +64,24 @@ App = {
     console.log("defLength : " + defLength)
     $("#defsRow").empty();
     for (var i = 0; i < defLength; i++) {
-      App.displayDefById(i, troisPhrases);
+      App.displayDefByIndex(i, troisPhrases);
     }
   },
 
-  displayDefById: async function(id, contract){
+  displayDefByIndex: async function(index, contract){
     let defsRow = $('#defsRow');
     let defTemplate = $('#defTemplate');
-    let definitionAffichage;
-    const definition = await contract.definitions.call(id);
+    const definition = await contract.definitions.call(index);
     console.log("def : " + definition);
-    defTemplate.find('.panel-def').attr('data-id', 'def-'+id);
+    defTemplate.find('.panel-def').attr('data-id', 'def-'+index);
     defTemplate.find('.defined').text(definition[2]);
+    defTemplate.find('.defined').attr('data-id', 'defined-'+index);
     defTemplate.find('.user').text(definition[0]);
     defTemplate.find('.definition').text(definition[1]);
     defTemplate.find('.votes').text(definition[3]);
-    defTemplate.find('.votes').attr('data-id', 'vote-'+id);
-    defTemplate.find('.btn-vote').attr('data-id', id);
-    defTemplate.find('.btn-suppr').attr('data-id', id);
+    defTemplate.find('.votes').attr('data-id', 'vote-'+index);
+    defTemplate.find('.btn-vote').attr('data-id', index);
+    defTemplate.find('.btn-suppr').attr('data-id', index);
     defsRow.append(defTemplate.html());
   },
 
@@ -117,7 +118,7 @@ App = {
       const troisPhrases = await App.contracts.TroisPhrases.deployed();
       await troisPhrases.createDefinition(addedDefinition, addedDefined, { from: accounts[0] });
       const defLength = await troisPhrases.getDefinitionsLength.call();
-      App.displayDefById(defLength-1, troisPhrases);
+      App.displayDefByIndex(defLength-1, troisPhrases);
     });
   },
 
@@ -130,9 +131,28 @@ App = {
       const troisPhrases = await App.contracts.TroisPhrases.deployed();
       await troisPhrases.deleteDefinition(defId, {
         from: accounts[0]
-      }).then(()=>{App.displayDefinitions();});
+      }).then(()=>{App.displayDefinitions();})
+      .catch(function(err) {
+    console.log(err.message);
+  });
     });
 
+  },
+
+  rechercheDef : async function(){
+    const troisPhrases = await App.contracts.TroisPhrases.deployed();
+    const defLength = await troisPhrases.getDefinitionsLength.call();
+    let input = $(".rechercheDef").val().toUpperCase();
+    for (let index = 0; index < defLength; index++) {
+      console.log($('[data-id="defined-'+index+'"]').text());
+      console.log(input);
+      if (!$('[data-id="defined-'+index+'"]').text().toUpperCase().includes(input)){
+        $('[data-id="def-'+index+'"]').css("display", "none");
+      } else {
+        $('[data-id="def-'+index+'"]').css("display", "");
+      }
+      
+    }
   }
 
 };
